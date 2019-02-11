@@ -25,6 +25,16 @@ QT_CONFIG_PARAMS = "-mp -opensource -confirm-license -nomake tests -nomake examp
                    " -skip qtwebview -skip qtx11extras -skip qtxmlpatterns"
 
 
+# Pass install path as QTDIR value
+QT_PRECONFIGURE_CMD = """SET QTDIR={0}
+SET PATH=%QTDIR%\bin;%PATH%
+SET QMAKESPEC=win32-msvc2010"""
+
+
+# 1st param is archive file, 2nd is unpack path
+P7UNZIP_COMMAND = "7z x -y {0} -o{1} -r"
+
+
 ###########################################################################
 def on_rm_error(*args):
     """
@@ -38,6 +48,31 @@ def on_rm_error(*args):
     logger.warning("OnRmError: {0}".format(path))
     os.chmod(path, stat.S_IWRITE)
     os.unlink(path)
+
+
+def is_file_any(executable):
+    """
+    :param executable: Archiver executable file name
+    :return: True if found in PATH, False otherwise
+    """
+    if not any([os.path.exists(os.path.join(p, executable)) for p in os.environ["PATH"].split(os.pathsep)]):
+        return False
+    return True
+
+
+def is_7z_exist():
+    """
+    :return: True if 7zip is found
+    """
+    return is_file_any("7z.exe") or is_file_any("7z")
+
+
+def unzip7(archive_file, unpack_path):
+    """
+    Use existing 7zip archiever to unpack 7z file
+    :return: 7z.exe return code
+    """
+    return os.system(P7UNZIP_COMMAND.format(archive_file, unpack_path))
 
 
 def get_target_cmd(target):
@@ -82,27 +117,14 @@ def set_unix_environment():
     raise NotImplementedError(set_unix_environment())
 
 
-def unzip_sources(path_to_sources):
-    directory_to_extract = os.getcwd()
-    logger.info("Current directory is: {0}".format(directory_to_extract))
-    zip_ref = zipfile.ZipFile(path_to_sources, 'r')
-    zip_ref.extractall(directory_to_extract)
-    zip_ref.close()
-
-
 def run_configure(cmd_shell, install_path):
 
-    variables_cmd = "SET QTDIR={0}\nSET PATH=%QTDIR%\bin;%PATH%\nSET QMAKESPEC=win32-msvc2010".format(install_path)
-    configure_cmd = "configure.bat -prefix %QTDIR% {0}".format(QT_CONFIG_PARAMS)
-
+    variables_cmd = QT_PRECONFIGURE_CMD.format(install_path)
+    configure_cmd = "configure.bat -prefix {0} {1}".format(install_path, QT_CONFIG_PARAMS)
+    
+    # TODO: run configure
     logger.info('Setting variables: {0}'.format(variables_cmd))
-    cmd_process = subprocess.Popen([cmd_shell, "/C", variables_cmd], stdin=subprocess.PIPE)
-    cmd_process.wait()
-
     logger.info('Run configure: {0}'.format(configure_cmd))
-    configure_process = subprocess.Popen([cmd_shell, "/C", configure_cmd], stdin=subprocess.PIPE)
-    configure_process.wait()
-    # TODO: 2. make && make install
 
 
 def build_qt(qt_sources, qt_version, target, install_path):
@@ -121,6 +143,7 @@ def build_qt(qt_sources, qt_version, target, install_path):
     # TODO:
     # 3.Edit source code for x86
     # 4.Compile and install
+
 
 def main():
     """
