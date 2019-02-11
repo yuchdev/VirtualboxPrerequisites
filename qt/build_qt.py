@@ -5,7 +5,7 @@ import subprocess
 import argparse
 import logging
 import zipfile
-import log_helper
+import .log_helper
 
 
 logger = log_helper.setup_logger(name="qt_builder", level=logging.DEBUG, log_to_file=False)
@@ -43,14 +43,12 @@ def on_rm_error(*args):
 def get_target_cmd(target):
     """
     :param target: Either "x86" or "x64"
-    :return: Tuple (Command-line-shell, command-line-switch). First param is cmd.exe shell version, suitable for
-    x86 or x64 target, it is returned for SetEnv.Cmd script from Windows SDK. Second param is a switch for this script,
-    generating
+    :return: Second param is a switch for the script, generating development environment
     """
     if target == 'x64':
-        return "C:\\Windows\\System32\\cmd.exe", "/x64"
+        return "/x64"
     elif target == 'x86':
-        return "C:\\Windows\\sysWOW64\\cmd.exe", "/x86"
+        return "/x86"
     else:
         logger.error("Target should be either x86 or x64")
 
@@ -108,17 +106,21 @@ def run_configure(cmd_shell, install_path):
 
 
 def build_qt(qt_sources, qt_version, target, install_path):
+
     # 1. Unpack sources
-    # unzip_sources(qt_sources)
+    # TODO: unzip_sources(qt_sources)
 
     if not os.path.exists(qt_sources):
         raise RuntimeError('Cannot detect Qt sources')
     os.chdir("qt-everywhere-opensource-src-{0}".format(qt_version))
 
     # 2. Set environment
-    cmd_shell, target_switch = get_target_cmd(target)
-    set_windows_environment(cmd_shell, target_switch)
-
+    target_switch = get_target_cmd(target)
+    set_windows_environment(target_switch)
+    
+    # TODO:
+    # 3.Edit source code for x86
+    # 4.Compile and install
 
 def main():
     """
