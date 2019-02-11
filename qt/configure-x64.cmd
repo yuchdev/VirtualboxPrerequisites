@@ -1,3 +1,4 @@
+@echo off
 call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.Cmd" /Release /x64 /win7
 SET QTDIR=C:\Qt\5.6.3\x64
 SET PATH=%QTDIR%\bin;%PATH%
