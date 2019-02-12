@@ -19,7 +19,7 @@ echo Install VS10SP1-KB2519277
 start /wait VC-Compiler-KB2519277.exe /quiet /norestart
 
 echo Install VS10SP1-KB2529927
-VS10SP1-KB2529927-v2-x86.exe
+start /wait VS10SP1-KB2529927-v2-x86.exe /quiet /norestart
 
 echo Install VS10SP1-KB2548139
 start /wait VS10SP1-KB2548139-x86.exe /quiet /norestart
