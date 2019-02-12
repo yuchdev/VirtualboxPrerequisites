@@ -1,17 +1,17 @@
 @echo off
 
 echo VS 2010 without SP1 Installer
-cd en-visual-studio-2010-x86-professional
+cd en-visual-studio-2010-pro-x86
 start /wait Setup\setup.exe /unattendfile C:\Users\atatat\Downloads\vbox.ini
 cd ..
 
 echo VS SP1
-cd mu-visual-studio-2010-x86-sp1
+cd mu-visual-studio-2010-sp1-x86
 start /wait Setup.exe /q /norestart
 cd ..
 
 echo Install VS 2010 updates
-cd en-visual-studio-2010-x86-sp1-updates
+cd en-visual-studio-2010-sp1-updates-x86
 
 echo Install VS10SP1-KB2519277
 start /wait VC-Compiler-KB2519277.exe /quiet /norestart
