@@ -3,7 +3,7 @@
 REM ActivePerl
 echo Install ActivePerl 5.26.3
 start /wait ActivePerl-5.26.3.2603-MSWin32-x64-a95bce075.exe /quiet
-ppm install Text::Template
+C:\Perl64\bin\ppm.bat install Text::Template
 
 REM ActivePython
 echo Install ActivePython 2.7.14
